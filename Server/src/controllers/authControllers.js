@@ -40,7 +40,7 @@ const register = async (req, res) => {
 
         const token = generateToken(user, res)
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "User registered successfully",
             data: {
                 id: user.id,
@@ -53,7 +53,7 @@ const register = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: "user registration failed",
             details: error.message
         })
@@ -93,7 +93,7 @@ const login = async (req, res) => {
 
         const token = generateToken(user, res)
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Login successful",
             data: {
                 id: user.id,
@@ -106,7 +106,7 @@ const login = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: "Login failed",
             details: error.message
         })
@@ -116,7 +116,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     res.clearCookie("token")
-    res.status(200).json({
+    return res.status(200).json({
         message: "Logged out successfully"
     })
 }
