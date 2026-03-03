@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  fullName      String
+  email         String   @unique
+  phone         String?  @unique
+  password      String
+  role          Role     @default(USER)
+  emailVerified Boolean  @default(false)
+  phoneVerified Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  apis Api[]
+}
+
+
+
+// Define the Api modal and HTTP methods as an enum
+
+enum HttpMethod {
+  GET
+  POST
+  PUT
+  DELETE
+  PATCH
+}
+
+model Api {
+  id              String   @id @default(uuid())
+  userId          String
+  name            String
+  url             String   @unique
+  method          HttpMethod
+  intervalMinutes Int      @default(5)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs ApiCheckLog[]
+}
+
+
+
+// Define the ApiCheckLog model and ApiStatus enum
+
+enum ApiStatus {
+  UP
+  DOWN
+}
+
+model ApiCheckLog {
+  id             String    @id @default(uuid())
+  apiId          String
+  status         ApiStatus
+  statusCode     Int
+  responseTimeMs Int
+  checkedAt      DateTime  @default(now())
+
+  api Api @relation(fields: [apiId], references: [id], onDelete: Cascade)
+}
+
