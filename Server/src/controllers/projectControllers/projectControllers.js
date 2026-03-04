@@ -2,7 +2,7 @@ import projectServices from "../../services/projectServices/projectServices.js";
 
 
 
-const createProject = async (req, res) => {
+const createProject = async (req, res, next) => {
 
     try {
 
@@ -30,13 +30,13 @@ const createProject = async (req, res) => {
         }
 
         console.log("Error creating project", error.message);
-        return res.status(500).json({ error: "Internal server error while creating project" });
+        next(error);
     }
 
 }
 
 
-const getAllProjects = async (req, res) => {
+const getAllProjects = async (req, res, next) => {
     try {
         const userId = req.user?.id;
 
@@ -47,18 +47,18 @@ const getAllProjects = async (req, res) => {
 
         return res.status(200).json({
             status: "success",
-            message: "Projects fetched successfully",
+            message: projects.length > 0 ? "Projects fetched successfully" : "You have not created any projects yet",
             projects
         });
 
     } catch (error) {
         console.log("Error fetching projects", error.message);
-        return res.status(500).json({ error: "Internal server error while fetching all projects" });
+        next(error);
     }
 }
 
 
-const getProjectById = async (req, res) => {
+const getProjectById = async (req, res, next) => {
     try {
 
         const userId = req.user?.id;
@@ -78,12 +78,12 @@ const getProjectById = async (req, res) => {
 
     } catch (error) {
         console.log("Error fetching project by id", error.message);
-        return res.status(500).json({ error: "Internal server error while fetching project by id" });
+        next(error);
     }
 }
 
 
-const updateProject = async (req, res) => {
+const updateProject = async (req, res, next) => {
     try {
 
         const userId = req.user?.id;
@@ -104,27 +104,23 @@ const updateProject = async (req, res) => {
 
     } catch (error) {
         console.log("Error updating project", error.message);
-        return res.status(500).json({ error: "Internal server error while updating project" });
+        next(error);
     }
 }
 
 
-const deleteProject = async (req, res) => {
+const deleteProject = async (req, res, next) => {
     try {
         const userId = req.user?.id;
         const projectId = req.params.id;
 
         const deletedProject = await projectServices.deleteProject({ projectId, userId });
 
-        return res.status(204).json({
-            status: "success",
-            message: "Project deleted successfully",
-            deletedProject
-        });
+        return res.status(204).send();
 
     } catch (error) {
         console.log("Error deleting project", error.message);
-        return res.status(500).json({ error: "Internal server error while deleting project" });
+        next(error);
     }
 }
 

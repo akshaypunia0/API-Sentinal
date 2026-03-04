@@ -1,4 +1,5 @@
 import { prisma } from "../../config/db.js";
+import AppError from "../../utills/appError.js";
 
 
 const createProject = async ({ name, description, userId }) => {
@@ -44,7 +45,7 @@ const updateProject = async ({ projectId, userId, name, description }) => {
     });
 
     if (!project) {
-        throw new Error("Project not found");
+        throw new AppError("Project not found", 404);
     }
 
     const existing = await prisma.project.findFirst({
@@ -56,7 +57,7 @@ const updateProject = async ({ projectId, userId, name, description }) => {
     })
 
     if (existing) {
-        throw new Error("Another project with the same name already exists");
+        throw new AppError("Another project with the same name already exists", 400);
     }
 
     return await prisma.project.update({
@@ -80,7 +81,7 @@ const deleteProject = async ({ projectId, userId }) => {
     });
 
     if (!project) {
-        return res.status(404).json({ error: "Project not found" });
+        throw new AppError("Project not found", 404);
     }
 
     return await prisma.project.delete({
