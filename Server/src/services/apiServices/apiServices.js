@@ -1,7 +1,7 @@
 import { prisma } from "../../config/db.js";
 import AppError from "../../utills/appError.js";
 
-const registerApi = async ({ projectId, title, url, method, intervalMinutes, expectedStatusCodes, isActive, userId }) => {
+const registerApi = async ({ projectId, title, url, method, intervalMinutes, expectedStatusCodes, isActive, userId, authType, authToken, authHeaderName, authHeaderValue, username, password }) => {
 
     const existingProject = await prisma.project.findFirst({
         where: {
@@ -22,7 +22,14 @@ const registerApi = async ({ projectId, title, url, method, intervalMinutes, exp
             method,
             intervalMinutes,
             expectedStatusCodes,
-            isActive
+            isActive,
+            // Authentication fields
+            authType: authType || 'NONE',
+            authToken,
+            authHeaderName,
+            authHeaderValue,
+            username,
+            password
         }
     })
     return newApi
@@ -85,7 +92,7 @@ const getApiById = async ({ apiId, projectId, userId }) => {
 }
 
 
-const updateApi = async ({ apiId, projectId, title, url, method, intervalMinutes, expectedStatusCodes, isActive, userId }) => {
+const updateApi = async ({ apiId, projectId, title, url, method, intervalMinutes, expectedStatusCodes, isActive, userId, authType, authToken, authHeaderName, authHeaderValue, username, password }) => {
     const existingProject = await prisma.project.findFirst({
         where: {
             id: projectId,
@@ -108,7 +115,14 @@ const updateApi = async ({ apiId, projectId, title, url, method, intervalMinutes
             method,
             intervalMinutes,
             expectedStatusCodes,
-            isActive
+            isActive,
+            // Authentication fields
+            authType,
+            authToken,
+            authHeaderName,
+            authHeaderValue,
+            username,
+            password
         }
     })
 

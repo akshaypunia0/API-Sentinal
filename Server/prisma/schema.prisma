@@ -59,17 +59,33 @@ enum HttpMethod {
   PATCH
 }
 
+enum AuthType {
+  NONE
+  BEARER_TOKEN
+  API_KEY
+  BASIC_AUTH
+  CUSTOM_HEADER
+}
+
 model Api {
   id                  String     @id @default(uuid())
   projectId           String
   title               String
   url                 String
   method              HttpMethod
-  intervalMinutes     Int        @default(5)
+  intervalMinutes     Int        @default(5) // User can choose: 1, 5, 10, 15, 30, 60
   expectedStatusCodes Int[]     @default([200])
   isActive            Boolean    @default(true)
   createdAt           DateTime   @default(now())
   updatedAt           DateTime   @updatedAt
+
+  // Authentication fields
+  authType            AuthType   @default(NONE)
+  authToken           String?    // For Bearer token or API key value
+  authHeaderName      String?    // Custom header name (e.g., "X-API-Key", "Authorization")
+  authHeaderValue     String?    // Custom header value
+  username            String?    // For Basic Auth
+  password            String?    // For Basic Auth
 
   project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   logs    ApiCheckLog[]
