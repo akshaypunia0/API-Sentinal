@@ -13,6 +13,18 @@ const createProject = async ({ name, description, userId }) => {
 }
 
 
+const createProjectHealthCheck = async () => {
+
+    try {
+        await prisma.$queryRaw`SELECT 1`
+        return true;
+    } catch (error) {
+        return false;
+    }
+    
+}
+
+
 const getAllProjects = async ({ userId, page, limit }) => {
     const skip = (page - 1) * limit
 
@@ -99,5 +111,6 @@ export default {
     getAllProjects,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    createProjectHealthCheck
 }

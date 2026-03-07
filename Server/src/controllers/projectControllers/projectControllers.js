@@ -36,6 +36,32 @@ const createProject = async (req, res, next) => {
 }
 
 
+const createProjectHealthCheck = async (req, res, next) => {
+    try {
+        const isHealthOk = await projectServices.createProjectHealthCheck();
+
+        if (isHealthOk) {
+            return res.status(200).json({
+                status: "ok",
+                database: "connected",
+                timestamp: new Date()
+            });
+        }
+        else {
+            return res.status(500).json({
+                status: "error",
+                database: "disconnected",
+                timestamp: new Date()
+            });
+        }
+
+    } catch (error) {
+        console.log("Error creating project health check", error.message);
+        next(error);
+    }
+}
+
+
 const getAllProjects = async (req, res, next) => {
     try {
         const userId = req.user?.id;
@@ -131,5 +157,6 @@ export {
     getAllProjects,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    createProjectHealthCheck
 }

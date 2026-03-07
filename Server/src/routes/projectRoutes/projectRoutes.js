@@ -5,7 +5,8 @@ import {
     updateProject,
     getAllProjects,
     getProjectById,
-    deleteProject
+    deleteProject,
+    createProjectHealthCheck
 } from '../../controllers/projectControllers/projectControllers.js';
 
 
@@ -16,5 +17,6 @@ router.get("/getAllProjects", authMiddleware, getAllProjects)
 router.get("/getProjectById/:id", authMiddleware, getProjectById)
 router.patch("/updateProject/:id", authMiddleware, updateProject)
 router.delete("/deleteProject/:id", authMiddleware, deleteProject)
+router.get("/health", authMiddleware, createProjectHealthCheck)
 
 export default router
