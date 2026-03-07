@@ -121,7 +121,8 @@ POST /api/v1/user/apis/{projectId}/apis
   "expectedStatusCodes": [200, 201],
   "isActive": true,
   "authType": "BEARER_TOKEN",
-  "authToken": "your-jwt-token-here"
+  "authToken": "your-jwt-token-here",
+  "healthCheckUrl": "https://api.example.com/health" // Optional: dedicated health endpoint
 }
 ```
 

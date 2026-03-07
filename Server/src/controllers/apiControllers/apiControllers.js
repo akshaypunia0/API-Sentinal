@@ -17,7 +17,9 @@ const registerApi = async (req, res, next) => {
             authHeaderName,
             authHeaderValue,
             username,
-            password
+            password,
+            // Optional health check URL
+            healthCheckUrl
         } = req.body
         const userId = req.user.id
 
@@ -82,7 +84,9 @@ const registerApi = async (req, res, next) => {
             authHeaderName,
             authHeaderValue,
             username,
-            password
+            password,
+            // Optional health check URL
+            healthCheckUrl
         })
 
         return res.status(201).json({
@@ -161,7 +165,9 @@ const updateApi = async (req, res, next) => {
             authHeaderName,
             authHeaderValue,
             username,
-            password
+            password,
+            // Optional health check URL
+            healthCheckUrl
         } = req.body
         const userId = req.user.id
 
@@ -227,7 +233,9 @@ const updateApi = async (req, res, next) => {
             authHeaderName,
             authHeaderValue,
             username,
-            password
+            password,
+            // Optional health check URL
+            healthCheckUrl
         })
 
         return res.status(200).json({

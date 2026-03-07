@@ -57,6 +57,8 @@ enum HttpMethod {
   PUT
   DELETE
   PATCH
+  HEAD
+  OPTIONS
 }
 
 enum AuthType {
@@ -86,6 +88,15 @@ model Api {
   authHeaderValue     String?    // Custom header value
   username            String?    // For Basic Auth
   password            String?    // For Basic Auth
+
+  // Optional health check endpoint for monitoring
+  healthCheckUrl      String?    // If provided, use this for monitoring instead of guessing
+
+  // Monitoring status fields
+  currentStatus       ApiStatus? @default(UP)     // Current status of the API
+  lastCheckedAt       DateTime?                  // When was the API last checked
+  lastResponseTimeMs  Int?                       // Last response time in milliseconds
+  failureCount        Int        @default(0)     // Number of consecutive failures
 
   project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   logs    ApiCheckLog[]
