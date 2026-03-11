@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 
 
 const authMiddleware = async(req, res, next) => {
-
+    
     let token;
     
     if(req.headers?.authorization && req.headers?.authorization.startsWith('Bearer')){
@@ -32,6 +32,7 @@ const authMiddleware = async(req, res, next) => {
         }
 
         req.user = user;
+        
 
         next();
 

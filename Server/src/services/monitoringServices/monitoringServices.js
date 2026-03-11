@@ -2,11 +2,13 @@ import { prisma } from "../../config/db.js";
 import axios from "axios";
 import nodemailer from "nodemailer";
 
+console.log("env variables inside monitoringServices.js: ", process.env.SMTP_SERVICE, process.env.SMTP_HOST);
+
+
 // Email configuration
 const emailTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT || 587,
-    secure: false,
+    
+    service: process.env.SMTP_SERVICE || "gmail",
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
@@ -172,11 +174,14 @@ const createLog = async (apiId, statusCode, status, responseTime) => {
 
 // Send down alert email
 const sendDownAlert = async (api, user) => {
+
+    console.log("Inside sendDownAlert: ", api, user);
+    
     try {
         const mailOptions = {
             from: process.env.SMTP_USER,
             to: user.email,
-            subject: `🚨 API Down Alert: ${api.title}`,
+            subject: `API Down Alert: ${api.title}`,
             html: `
                 <h2>API Monitoring Alert</h2>
                 <p><strong>API:</strong> ${api.title}</p>

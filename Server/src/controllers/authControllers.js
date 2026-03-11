@@ -62,6 +62,9 @@ const register = async (req, res) => {
 
 
 const login = async (req, res) => {
+
+    console.log("Login hit");
+    
     try {
         const { email, password } = req.body
 
@@ -121,4 +124,34 @@ const logout = async (req, res) => {
     })
 }
 
-export { register, login, logout }
+const me = async (req, res) => {
+    
+    try {
+        
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: {
+                id: true,
+                fullName: true,
+                email: true,
+                phone: true,
+                role: true
+            }
+        })
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" })
+        }
+
+        return res.status(200).json({
+            data: user
+        })
+    } catch (error) {
+        return res.status(500).json({
+            error: "Failed to get user info",
+            details: error.message
+        })
+    }
+}
+
+export { register, login, logout, me }
