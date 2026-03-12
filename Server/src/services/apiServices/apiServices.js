@@ -1,6 +1,19 @@
 import { prisma } from "../../config/db.js";
 import AppError from "../../utills/appError.js";
 
+const totalApisOfUser = async (userId) => {
+    const totalApis = await prisma.api.findMany({
+        where: {
+            project: {
+                userId
+            }
+        }
+    })
+    return totalApis
+
+}
+
+
 const registerApi = async ({ projectId, title, url, method, intervalMinutes, expectedStatusCodes, isActive, userId, authType, authToken, authHeaderName, authHeaderValue, username, password, healthCheckUrl }) => {
 
     const existingProject = await prisma.project.findFirst({
@@ -161,5 +174,6 @@ export default {
     getAllApisByProjectId,
     getApiById,
     updateApi,
-    deleteApi
+    deleteApi,
+    totalApisOfUser
 }

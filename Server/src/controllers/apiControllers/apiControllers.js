@@ -1,6 +1,24 @@
 import apiServices from "../../services/apiServices/apiServices.js"
 import monitoringServices from "../../services/monitoringServices/monitoringServices.js"
 
+
+const totalApisOfUser = async (req, res, next) => {
+    try {
+        const userId = req.user.id
+
+        const totalApis = await apiServices.totalApisOfUser(userId)
+        return res.status(200).json({
+            status: "success",
+            message: "Total APIs fetched successfully",
+            totalApis
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 const registerApi = async (req, res, next) => {
     try {
         const { projectId } = req.params
@@ -309,27 +327,24 @@ const getApiStats = async (req, res, next) => {
 }
 
 
-const triggerApiCheck = async (req, res, next) => {
-    try {
-        const { apiId, projectId } = req.params
-        const userId = req.user.id
+// const triggerApiCheck = async (req, res, next) => {
+//     try {
+        
+//         const {api} = req.body
 
-        // Get the API details
-        const api = await apiServices.getApiById({ apiId, projectId, userId })
+//         // Perform immediate check
+//         const logEntry = await monitoringServices.checkApi(api)
 
-        // Perform immediate check
-        const logEntry = await monitoringServices.checkApi(api)
+//         return res.status(200).json({
+//             status: "success",
+//             message: "API check completed",
+//             result: logEntry
+//         })
 
-        return res.status(200).json({
-            status: "success",
-            message: "API check completed",
-            result: logEntry
-        })
-
-    } catch (error) {
-        next(error)
-    }
-}
+//     } catch (error) {
+//         next(error)
+//     }
+// }
 
 
 
@@ -341,5 +356,5 @@ export {
     deleteApi,
     getApiLogs,
     getApiStats,
-    triggerApiCheck
+    totalApisOfUser
 }

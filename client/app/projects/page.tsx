@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { FolderOpen, Plus } from 'lucide-react'
 import { authUtils } from '@/lib/apiCalls/authApi'
+import ProjectTable from '@/components/projects/Table'
+
+
 
 export default function ProjectsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -56,67 +59,9 @@ export default function ProjectsPage() {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="bg-white p-3 rounded-2xl border border-gray-300">
         {/* Mock project cards - replace with real data */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderOpen className="h-5 w-5" />
-              E-commerce API
-            </CardTitle>
-            <CardDescription>
-              Monitoring payment and order APIs
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">5 APIs</span>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderOpen className="h-5 w-5" />
-              User Management
-            </CardTitle>
-            <CardDescription>
-              Authentication and user profile APIs
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">3 APIs</span>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderOpen className="h-5 w-5" />
-              Analytics Service
-            </CardTitle>
-            <CardDescription>
-              Data analytics and reporting APIs
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">7 APIs</span>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <ProjectTable />
       </div>
 
       <Card>

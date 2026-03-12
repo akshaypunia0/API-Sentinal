@@ -69,3 +69,5 @@ export const authUtils = {
     }
   }
 }
+
+export default apiAuth

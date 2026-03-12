@@ -6,43 +6,97 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { BarChart3, Globe, FolderOpen, Activity } from 'lucide-react'
 import { authUtils } from '@/lib/apiCalls/authApi'
+import { projectApiCalls } from '@/lib/apiCalls/projectApis'
+import { apimanagementApiCalls } from '@/lib/apiCalls/apiManagementCalls'
+import DashboardCard from '@/components/dashboard/Card'
 
 export default function DashboardPage() {
+
+  interface ApiData {
+  id: string;
+  name: string;
+  lastResponseTimeMs: number;
+}
+
+
+
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    // Only check auth when accessing dashboard - this calls /auth/me
-    const checkAuthentication = async () => {
-      const result = await authUtils.checkAuth()
-      setIsAuthenticated(result.success)
-      setIsLoading(false)
-    }
 
-    checkAuthentication()
+  //apiData states
+  const [allProjects, setAllProjects] = useState([])
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+
+  const [allApis, setAllApis] = useState<ApiData[]>([])
+
+  const [averageResponse, setAverageResponse] = useState(0)
+
+
+  const getAllProjects = async () => {
+    const response = await projectApiCalls.getAllProjects(page, limit)
+    setAllProjects(response.projects)
+  }
+
+  const getAllApis = async () => {
+    const response = await apimanagementApiCalls.getAllApis()
+    setAllApis(response.totalApis)
+  }
+
+  useEffect(() => {
+    getAllProjects();
+    getAllApis();
   }, [])
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login')
+    if (allApis.length > 0) {
+      const sum = allApis.reduce((acc, apiData) => acc + apiData.lastResponseTimeMs, 0);
+      setAverageResponse(sum / allApis.length);
+    } else {
+      setAverageResponse(0);
     }
-  }, [isAuthenticated, isLoading, router])
+  }, [allApis])
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
-  }
+  console.log("All projects: ", allProjects);
+  console.log("All apis: ", allApis);
+  console.log("Average responsee time: ", averageResponse);
+  
 
-  if (!isAuthenticated) {
-    return null // Will redirect
-  }
+
+
+  // useEffect(() => {
+  //   // Only check auth when accessing dashboard - this calls /auth/me
+  //   const checkAuthentication = async () => {
+  //     const result = await authUtils.checkAuth()
+  //     setIsAuthenticated(result.success)
+  //     setIsLoading(false)
+  //   }
+
+  //   checkAuthentication()
+  // }, [])
+
+  // useEffect(() => {
+  //   if (!isLoading && !isAuthenticated) {
+  //     router.push('/login')
+  //   }
+  // }, [isAuthenticated, isLoading, router])
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+  //         <p className="mt-2 text-muted-foreground">Loading...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
+
+  // if (!isAuthenticated) {
+  //   return null // Will redirect
+  // }
 
   return (
     <div className="p-6 space-y-6">
@@ -53,46 +107,10 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <FolderOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">+2 from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active APIs</CardTitle>
-            <Globe className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">48</div>
-            <p className="text-xs text-muted-foreground">+8 from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Uptime</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">99.8%</div>
-            <p className="text-xs text-muted-foreground">+0.2% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Alerts</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">-2 from last month</p>
-          </CardContent>
-        </Card>
+        <DashboardCard title="Total Projects" data={allProjects.length} icon={<FolderOpen />} />
+        <DashboardCard title="Total APIs" data={allApis.length} icon={<Globe />} />
+        <DashboardCard title="Average Response time" data={Number((averageResponse).toFixed(1))} icon={<Activity />} />
+        <DashboardCard title="Alerts" data={3} icon={<BarChart3 />} />
       </div>
 
       {/* Quick Actions */}
