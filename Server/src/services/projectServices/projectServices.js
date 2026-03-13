@@ -21,7 +21,7 @@ const createProjectHealthCheck = async () => {
     } catch (error) {
         return false;
     }
-    
+
 }
 
 
@@ -30,6 +30,13 @@ const getAllProjects = async ({ userId, page, limit }) => {
 
     return await prisma.project.findMany({
         where: { userId },
+        include: {
+            _count: {
+                select: {
+                    apis: true
+                }
+            }
+        },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" }

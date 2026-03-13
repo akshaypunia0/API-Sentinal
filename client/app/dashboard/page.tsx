@@ -66,40 +66,40 @@ export default function DashboardPage() {
 
 
 
-  // useEffect(() => {
-  //   // Only check auth when accessing dashboard - this calls /auth/me
-  //   const checkAuthentication = async () => {
-  //     const result = await authUtils.checkAuth()
-  //     setIsAuthenticated(result.success)
-  //     setIsLoading(false)
-  //   }
+  useEffect(() => {
+    // Only check auth when accessing dashboard - this calls /auth/me
+    const checkAuthentication = async () => {
+      const result = await authUtils.checkAuth()
+      setIsAuthenticated(result.success)
+      setIsLoading(false)
+    }
 
-  //   checkAuthentication()
-  // }, [])
+    checkAuthentication()
+  }, [])
 
-  // useEffect(() => {
-  //   if (!isLoading && !isAuthenticated) {
-  //     router.push('/login')
-  //   }
-  // }, [isAuthenticated, isLoading, router])
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, isLoading, router])
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex items-center justify-center min-h-screen">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-  //         <p className="mt-2 text-muted-foreground">Loading...</p>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
 
-  // if (!isAuthenticated) {
-  //   return null // Will redirect
-  // }
+  if (!isAuthenticated) {
+    return null // Will redirect
+  }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 animate-fade-in">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">Welcome to API Sentinel. Monitor your APIs with ease.</p>
@@ -107,10 +107,10 @@ export default function DashboardPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard title="Total Projects" data={allProjects.length} icon={<FolderOpen />} />
-        <DashboardCard title="Total APIs" data={allApis.length} icon={<Globe />} />
-        <DashboardCard title="Average Response time" data={Number((averageResponse).toFixed(1))} icon={<Activity />} />
-        <DashboardCard title="Alerts" data={3} icon={<BarChart3 />} />
+        <DashboardCard title="Total Projects" data={allProjects.length} icon={<FolderOpen />} accentClass="bg-blue-400/10 text-blue-400" description="Active monitoring projects" />
+        <DashboardCard title="Total APIs" data={allApis.length} icon={<Globe />} accentClass="bg-emerald-400/10 text-emerald-400" description="Endpoints being watched" />
+        <DashboardCard title="Avg Response Time" data={Number((averageResponse).toFixed(1))} suffix="ms" icon={<Activity />} accentClass="bg-amber-400/10 text-amber-400" description="Across all endpoints" />
+        <DashboardCard title="Active Alerts" data={3} icon={<BarChart3 />} accentClass="bg-rose-400/10 text-rose-400" description="Require attention" />
       </div>
 
       {/* Quick Actions */}
@@ -143,22 +143,22 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="flex items-center gap-4 animate-fade-in">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">API /api/users is up</p>
                 <p className="text-xs text-muted-foreground">2 minutes ago</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <div className="flex items-center gap-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">API /api/orders is down</p>
                 <p className="text-xs text-muted-foreground">5 minutes ago</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <div className="flex items-center gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">New project created: E-commerce</p>
                 <p className="text-xs text-muted-foreground">1 hour ago</p>
