@@ -28,10 +28,10 @@ const perks = [
 ]
 
 function RegisterForm() {
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [phone, setPhone] = useState<number | null>(null)
+  const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -42,7 +42,23 @@ function RegisterForm() {
     setIsLoading(true)
     setError('')
 
+    console.log("Formdata 1: ", {
+      fullName,
+      email,
+      phone: phone || undefined,
+      password,
+    });
+    
+
     try {
+
+      console.log("Formdata 2: ", {
+        fullName,
+        email,
+        phone: phone || undefined,
+        password,
+      });
+
       const result = await authUtils.register({
         fullName,
         email,

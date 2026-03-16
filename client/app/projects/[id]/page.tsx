@@ -1,6 +1,6 @@
 "use client"
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { apimanagementApiCalls } from '@/lib/apiCalls/apiManagementCalls'
 import { projectApiCalls } from '@/lib/apiCalls/projectApis'
@@ -16,8 +16,16 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Eye, Plus, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import LoadigPage from '@/components/other/Loadig'
 
 const page = () => {
+
+    const { id } = useParams()
+
+    console.log("Project id: ", id);
+    
+    const router = useRouter()
+    
 
     interface apiData {
         id: string;
@@ -39,10 +47,9 @@ const page = () => {
 
     const [allApis, setAllApis] = useState<apiData[]>([])
     const [projectData, setProjectData] = useState<projectData | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
 
-    const { id } = useParams()
-
-    console.log(id)
+    
 
     const getAllApis = async () => {
         const response = await apimanagementApiCalls.getAllApisByProjectId(id as string)
@@ -52,6 +59,7 @@ const page = () => {
     const getProjectData = async () => {
         const response = await projectApiCalls.getProjectById(id as string)
         setProjectData(response.project)
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -67,6 +75,10 @@ const page = () => {
 
     console.log("allApis data", allApis)
     console.log("projectData", projectData)
+
+    if (isLoading) {
+        return <LoadigPage />
+    }
 
     const getMethodColor = (method: string) => {
         switch (method) {
@@ -111,6 +123,13 @@ const page = () => {
             const diffDays = Math.floor(diffHours / 24)
             return `${diffDays === 1 ? '1 day' : `${diffDays} days`} ago`
         }
+    }
+
+
+    const apiDetailPage = (apiId: string) => {
+        console.log("Ids here",id, apiId);
+        
+        router.push(`/projects/${id}/${apiId}`)
     }
 
 
@@ -243,23 +262,25 @@ const page = () => {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <div className="flex gap-1 p-1 rounded-md bg-sidebar-accent/20 group-hover:bg-sidebar-accent/50 transition-all">
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            className="h-8 w-8 p-0 hover:bg-sidebar-accent hover:text-primary"
+                                                            className="h-8 w-8 p-0 text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary"
+                                                            onClick={() => apiDetailPage(api.id)}
                                                         >
                                                             <Eye className="w-4 h-4" />
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                                            className="h-8 w-8 p-0 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </Button>
                                                     </div>
                                                 </TableCell>
+
                                             </TableRow>
                                         ))}
                                     </TableBody>
