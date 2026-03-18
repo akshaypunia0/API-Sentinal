@@ -1,4 +1,4 @@
-import apiAuth from './authApi';
+import apiAuth, { authUtils } from './authApi';
 
 const getAllProjects = async (page: number, limit: number) => {
     try {
@@ -51,10 +51,35 @@ const deleteProject = async (id: string) => {
 }
 
 
+const getDashboardData = async () => {
+    try {
+        const response = await apiAuth.get("/user/dashboard")
+
+        return response.data
+        
+    } catch (error) {
+        throw new Error("Failed to get Dashboard data")
+    }
+}
+
+
+const getRecentActivity = async () => {
+    try {
+        const response = await apiAuth.get("/user/dashboard/recent")
+
+        return response.data
+    } catch (error) {
+        throw new Error("Failed to get Recent activities")
+    }
+}
+
+
 export const projectApiCalls = {
     getAllProjects,
     createProject,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    getDashboardData,
+    getRecentActivity
 }

@@ -27,57 +27,66 @@ import {
 
 export default function DashboardPage() {
 
-  interface ApiData {
-    id: string
-    name: string
-    lastResponseTimeMs: number
+
+  interface dashboardData {
+    stats: object,
+    charts: object
   }
+
+  interface latestProjects {
+    name: string,
+    createdAt: string
+  }
+
+  interface latestApi {
+    url: string,
+    method: string,
+    createdAt: string
+  }
+
+
+  interface recentActivities {
+    latestProject: latestProjects,
+    latestApi: latestApi
+  }
+
+
+
 
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   const router = useRouter()
 
-  const [allProjects, setAllProjects] = useState<any[]>([])
-  const [page] = useState(1)
-  const [limit] = useState(10)
+  const [dashboardData, setDashboardData] = useState<dashboardData | null>(null)
+  const [recentActivities, setRecentActivities] = useState<recentActivities | null>(null)
 
-  const [allApis, setAllApis] = useState<ApiData[]>([])
-  const [averageResponse, setAverageResponse] = useState(0)
 
-  const getAllProjects = async () => {
-    const response = await projectApiCalls.getAllProjects(page, limit)
-    setAllProjects(response.projects)
+
+  const getDashboardData = async () => {
+    const response = await projectApiCalls.getDashboardData()
+    setDashboardData(response.dashboardData)
   }
 
-  const getAllApis = async () => {
-    const response = await apimanagementApiCalls.getAllApis()
-    setAllApis(response.totalApis)
+  const getRecentActivities = async () => {
+    const response = await projectApiCalls.getRecentActivity()
+    setRecentActivities(response.recentActivities)
+
   }
 
   useEffect(() => {
 
-    getAllProjects()
-    getAllApis()
+    getDashboardData()
+    getRecentActivities()
 
     const interval = setInterval(() => {
-      getAllApis()
+      getDashboardData()
     }, 21000)
 
     return () => clearInterval(interval)
 
   }, [])
 
-  useEffect(() => {
-
-    if (allApis.length > 0) {
-      const sum = allApis.reduce((acc, apiData) => acc + apiData.lastResponseTimeMs, 0)
-      setAverageResponse(sum / allApis.length)
-    } else {
-      setAverageResponse(0)
-    }
-
-  }, [allApis])
 
   useEffect(() => {
 
@@ -107,30 +116,29 @@ export default function DashboardPage() {
     return null
   }
 
-  // ---------------- Chart Data ----------------
+  const responseTrendData =
+    dashboardData?.charts?.responseTimeTrend?.map((item: any) => ({
+      time: new Date(item.time).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      responseTime: item.responseTime
+    }))?.reverse() || []
 
-  const responseTrendData = allApis.slice(0, 10).map((api, index) => ({
-    name: `API ${index + 1}`,
-    response: api.lastResponseTimeMs
-  }))
 
-  const slowestApis = [...allApis]
-    .sort((a, b) => b.lastResponseTimeMs - a.lastResponseTimeMs)
-    .slice(0, 5)
-    .map(api => ({
-      name: api.name,
-      response: api.lastResponseTimeMs
-    }))
+  const statusData = dashboardData?.charts?.statusDistribution
+    ? [
+      { name: "Healthy", value: dashboardData.charts.statusDistribution.healthy },
+      { name: "Slow", value: dashboardData.charts.statusDistribution.slow },
+      { name: "Down", value: dashboardData.charts.statusDistribution.down }
+    ]
+    : []
 
-  const upCount = allApis.filter(api => api.lastResponseTimeMs < 500).length
-  const downCount = allApis.filter(api => api.lastResponseTimeMs >= 500).length
-
-  const statusData = [
-    { name: "UP", value: upCount },
-    { name: "SLOW/DOWN", value: downCount }
-  ]
-
-  const COLORS = ["#22c55e", "#ef4444"]
+  const STATUS_COLORS: Record<string, string> = {
+    Healthy: "#22c55e", // green
+    Slow: "#f59e0b",    // yellow
+    Down: "#ef4444"     // red
+  }
 
   return (
 
@@ -149,7 +157,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Total Projects"
-          data={allProjects.length}
+          data={dashboardData?.stats?.totalProjects}
           icon={<FolderOpen />}
           accentClass="bg-blue-400/10 text-blue-400"
           description="Active monitoring projects"
@@ -157,7 +165,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Total APIs"
-          data={allApis.length}
+          data={dashboardData?.stats?.totalApis}
           icon={<Globe />}
           accentClass="bg-emerald-400/10 text-emerald-400"
           description="Endpoints being watched"
@@ -165,7 +173,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Avg Response Time"
-          data={Number((averageResponse).toFixed(1))}
+          data={dashboardData?.stats?.avgResponseTime}
           suffix="ms"
           icon={<Activity />}
           accentClass="bg-amber-400/10 text-amber-400"
@@ -174,7 +182,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Active Alerts"
-          data={3}
+          data={dashboardData?.stats?.activeAlerts}
           icon={<BarChart3 />}
           accentClass="bg-rose-400/10 text-rose-400"
           description="Require attention"
@@ -203,17 +211,14 @@ export default function DashboardPage() {
 
                 <CartesianGrid strokeDasharray="3 3" />
 
-                <XAxis dataKey="name" />
+                <XAxis dataKey="time" />
 
-                <YAxis />
+                <YAxis dataKey="responseTime" />
 
                 <Tooltip />
 
                 <Line
-                  type="monotone"
-                  dataKey="response"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
+                  dataKey="responseTime"
                 />
 
               </LineChart>
@@ -238,7 +243,6 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height="100%">
 
               <PieChart>
-
                 <Pie
                   data={statusData}
                   innerRadius={60}
@@ -246,15 +250,15 @@ export default function DashboardPage() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-
                   {statusData.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={index}
+                      fill={STATUS_COLORS[entry.name]}
+                    />
                   ))}
-
                 </Pie>
 
                 <Tooltip />
-
               </PieChart>
 
             </ResponsiveContainer>
@@ -315,27 +319,32 @@ export default function DashboardPage() {
 
           <div className="space-y-4">
 
-            <div className="flex items-center gap-4">
+            {/* <div className="flex items-center gap-4">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">API /api/users is up</p>
                 <p className="text-xs text-muted-foreground">2 minutes ago</p>
               </div>
-            </div>
+            </div> */}
 
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">API /api/orders is down</p>
-                <p className="text-xs text-muted-foreground">5 minutes ago</p>
-              </div>
-            </div>
+
 
             <div className="flex items-center gap-4">
               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium">New project created</p>
-                <p className="text-xs text-muted-foreground">1 hour ago</p>
+                <p className="text-sm font-medium">Recently register API: {recentActivities?.latestApi.url}</p>
+                <p className="text-sm font-medium">method: {recentActivities?.latestApi?.method}</p>
+                <p className="text-xs text-muted-foreground">created at: {recentActivities?.latestApi?.createdAt}</p>
+              </div>
+            </div>
+
+
+
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium">Recently created project: {recentActivities?.latestProject?.name}</p>
+                <p className="text-xs text-muted-foreground">{recentActivities?.latestProject?.createdAt}</p>
               </div>
             </div>
 
