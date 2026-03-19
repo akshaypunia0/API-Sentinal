@@ -8,6 +8,9 @@ import { FolderOpen, Plus } from 'lucide-react'
 import { authUtils } from '@/lib/apiCalls/authApi'
 import ProjectTable from '@/components/projects/Table'
 import { projectApiCalls } from '@/lib/apiCalls/projectApis'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import ProjectForm from '@/components/forms/ProjectForm'
+import PaginationComponent from '@/components/other/Pagination'
 
 
 
@@ -17,6 +20,8 @@ export default function ProjectsPage() {
   const [limit, setLimit] = useState(10)
   const [allProjects, setAllProjects] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<any>(null)
 
   const router = useRouter()
 
@@ -58,6 +63,15 @@ export default function ProjectsPage() {
   }, [isAuthenticated, page, limit])
 
 
+
+  const handleSubmitProject = async (data: object) => {
+    await projectApiCalls.createProject(data)
+    fetchAllProjects()
+  }
+
+
+
+
   // Conditional rendering AFTER hooks
   if (isLoading) {
     return (
@@ -83,9 +97,15 @@ export default function ProjectsPage() {
           <h1 className="text-3xl font-bold">Projects</h1>
           <p className="text-muted-foreground">Manage your API monitoring projects</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          New Project
+        <Button
+          onClick={() => {
+            setSelectedProject(null)
+            setOpen(true)
+          }}
+          className=" bg-gray-200 text-black hover:bg-white transition-all shadow-md hover:shadow-xl hover:-translate-y-0.2 active:translate-y-0 hover:border-gray-100 flex items-center"
+        >
+          <Plus className="h-4 w-4 mr-2 transition-transform duration-200 group-hover:rotate-90" />
+          Create Project
         </Button>
       </div>
 
@@ -100,14 +120,40 @@ export default function ProjectsPage() {
             <p className="text-muted-foreground text-center mb-4">
               Create your first project to start monitoring your APIs
             </p>
-            <Button>
+            <Button
+              onClick={() => {
+                setSelectedProject(null)
+                setOpen(true)
+              }}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Create Your First Project
             </Button>
           </CardContent>
         </Card>}
 
+        <PaginationComponent />
 
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="p-0 bg-transparent border-none">
+          <DialogTitle>
+            This is testing
+          </DialogTitle>
+
+          <DialogHeader className="hidden">
+            {/* optional */}
+          </DialogHeader>
+
+          <ProjectForm
+            initialData={selectedProject}
+            onSubmit={handleSubmitProject}
+            setOpen={setOpen}
+
+          />
+
+        </DialogContent>
+      </Dialog>
 
 
     </div>

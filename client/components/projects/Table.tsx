@@ -3,62 +3,11 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { projectApiCalls } from "@/lib/apiCalls/projectApis"
-import { useEffect, useState } from "react"
-import { log } from "console"
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
-
-
 
 
 
@@ -87,9 +36,20 @@ function ProjectTable({ allProjects, deleteProject, view }: any) {
               <TableCell>{(project.createdAt).split("T")[0]}</TableCell>
               <TableCell>{(project.updatedAt).split("T")[0]}</TableCell>
               <TableCell className="text-right flex justify-end gap-2">
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={() => view(project.id)}>View</Button>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">Edit</Button>
-                <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => deleteProject(project.id)}>Delete</Button>
+                <Button
+                  onClick={() => view(project.id)}
+                  className="bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 hover:text-blue-300 transition-all duration-200 px-3 py-1.5 text-sm rounded-md"
+                >
+                  View
+                </Button>
+
+                {/* DELETE */}
+                <Button
+                  onClick={() => deleteProject(project.id)}
+                  className="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 px-3 py-1.5 text-sm rounded-md"
+                >
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}

@@ -140,6 +140,28 @@ export default function DashboardPage() {
     Down: "#ef4444"     // red
   }
 
+
+
+  const formatLastCheckedAt = (dateString: string) => {
+    const now = new Date()
+    const date = new Date(dateString)
+    const diffMs = now.getTime() - date.getTime()
+    const diffSeconds = Math.floor(diffMs / 1000)
+    const diffMinutes = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+
+    if (diffSeconds < 60) {
+      return `${diffSeconds === 1 ? '1 second' : `${diffSeconds} seconds`} ago`
+    } else if (diffMinutes < 60) {
+      return `${diffMinutes === 1 ? '1 minute' : `${diffMinutes} minutes`} ago`
+    } else if (diffHours < 24) {
+      return `${diffHours === 1 ? '1 hour' : `${diffHours} hours`} ago`
+    } else {
+      const diffDays = Math.floor(diffHours / 24)
+      return `${diffDays === 1 ? '1 day' : `${diffDays} days`} ago`
+    }
+  }
+
   return (
 
     <div className="p-6 space-y-6 animate-fade-in">
@@ -334,7 +356,7 @@ export default function DashboardPage() {
               <div className="flex-1">
                 <p className="text-sm font-medium">Recently register API: {recentActivities?.latestApi.url}</p>
                 <p className="text-sm font-medium">method: {recentActivities?.latestApi?.method}</p>
-                <p className="text-xs text-muted-foreground">created at: {recentActivities?.latestApi?.createdAt}</p>
+                <p className="text-xs text-muted-foreground">registered: {formatLastCheckedAt(recentActivities?.latestApi?.createdAt)}</p>
               </div>
             </div>
 
@@ -344,7 +366,7 @@ export default function DashboardPage() {
               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">Recently created project: {recentActivities?.latestProject?.name}</p>
-                <p className="text-xs text-muted-foreground">{recentActivities?.latestProject?.createdAt}</p>
+                <p className="text-xs text-muted-foreground">created: {formatLastCheckedAt(recentActivities?.latestProject?.createdAt)}</p>
               </div>
             </div>
 
