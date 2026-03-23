@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { apimanagementApiCalls } from '@/lib/apiCalls/apiManagementCalls'
 import { projectApiCalls } from '@/lib/apiCalls/projectApis'
 import {
@@ -19,6 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import LoadigPage from '@/components/other/Loadig'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import ProjectForm from '@/components/forms/ProjectForm'
+import ApiRegistrationForm from '@/components/forms/ApiForm'
 
 const page = () => {
 
@@ -52,6 +53,7 @@ const page = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     const [open, setOpen] = useState(false)
+    const [apiModelOpen, setApiModelOpen] = useState(false)
     const [selectedProject, setSelectedProject] = useState<any>(null)
 
 
@@ -141,6 +143,11 @@ const page = () => {
         getProjectData()
     }
 
+    const handleApiSubmit = async (data: object) => {
+        await apimanagementApiCalls.registerApi(id, data)
+        getAllApis()
+    }
+
 
     return (
         <div>
@@ -164,7 +171,12 @@ const page = () => {
                         >
                             Edit Project
                         </Button>
-                        <Button size="sm">
+                        <Button
+                            size="sm"
+                            onClick={() => {
+                                setApiModelOpen(true)
+                            }}
+                        >
                             <Plus className="w-4 h-4 mr-1" />
                             New API
                         </Button>
@@ -236,7 +248,7 @@ const page = () => {
                                                             {api.method}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell className="font-mono text-sm text-sidebar-foreground truncate max-w-[300px]">
+                                                    <TableCell className="font-mono text-sm text-sidebar-foreground truncate max-w-75">
                                                         {api.url}
                                                     </TableCell>
                                                     <TableCell>
@@ -331,6 +343,34 @@ const page = () => {
 
                     />
 
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={apiModelOpen} onOpenChange={setApiModelOpen}>
+                <DialogContent
+                    className="fixed! inset-0! top-0! left-0! translate-x-0! translate-y-0! max-w-none! w-auto! rounded-none! bg-black/60 backdrop-blur-sm border-none shadow-none ring-0 flex items-center justify-center overflow-y-auto p-6 sm:p-10"
+                    showCloseButton={false}
+                >
+                    <DialogTitle className="hidden" />
+                    <DialogHeader className="hidden" />
+                    <div className="w-full max-w-[750px] relative">
+                        {/* Custom close button */}
+                        <button
+                            type="button"
+                            onClick={() => setApiModelOpen(false)}
+                            className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-[#1c1c1c] border border-[#333] flex items-center justify-center text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-colors shadow-lg"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                        </button>
+                        <ApiRegistrationForm
+                            projectId={id}
+                            initialData={null}
+                            onSubmit={handleApiSubmit}
+                            setOpen={setApiModelOpen}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
 

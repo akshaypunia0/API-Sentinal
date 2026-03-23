@@ -94,7 +94,7 @@ model Api {
 
   // Monitoring status fields
   currentStatus       ApiStatus? @default(UP)     // Current status of the API
-  lastCheckedAt       DateTime?                  // When was the API last checked
+  lastCheckedAt       DateTime?  @default(now())               // When was the API last checked
   lastResponseTimeMs  Int?                       // Last response time in milliseconds
   failureCount        Int        @default(0)     // Number of consecutive failures
 
