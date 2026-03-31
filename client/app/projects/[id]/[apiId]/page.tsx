@@ -283,13 +283,13 @@ const page = () => {
         <div className="flex gap-2 shrink-0">
           <Button variant="outline" size="sm">
             <Edit3 className="w-4 h-4 mr-2" />
-            Edit
+            Edit Project
           </Button>
 
-          <Button variant="destructive" size="sm">
+          {/* <Button variant="destructive" size="sm">
             <Trash2 className="w-4 h-4 mr-2" />
             Delete
-          </Button>
+          </Button> */}
         </div>
       </div>
 

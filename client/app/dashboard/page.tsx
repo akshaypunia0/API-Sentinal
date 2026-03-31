@@ -28,9 +28,21 @@ import {
 export default function DashboardPage() {
 
 
-  interface dashboardData {
-    stats: object,
-    charts: object
+  interface DashboardData {
+    stats: {
+      totalProjects: number
+      totalApis: number
+      avgResponseTime: number
+      activeAlerts: number
+    }
+    charts: {
+      responseTimeTrend: { time: string | Date; responseTime: number | null }[]
+      statusDistribution: {
+        healthy: number
+        slow: number
+        down: number
+      }
+    }
   }
 
   interface latestProjects {
@@ -58,7 +70,7 @@ export default function DashboardPage() {
 
   const router = useRouter()
 
-  const [dashboardData, setDashboardData] = useState<dashboardData | null>(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [recentActivities, setRecentActivities] = useState<recentActivities | null>(null)
 
 
@@ -117,7 +129,7 @@ export default function DashboardPage() {
   }
 
   const responseTrendData =
-    dashboardData?.charts?.responseTimeTrend?.map((item: any) => ({
+    dashboardData?.charts?.responseTimeTrend?.map((item) => ({
       time: new Date(item.time).toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
@@ -179,7 +191,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Total Projects"
-          data={dashboardData?.stats?.totalProjects}
+          data={dashboardData?.stats?.totalProjects ?? 0}
           icon={<FolderOpen />}
           accentClass="bg-blue-400/10 text-blue-400"
           description="Active monitoring projects"
@@ -187,7 +199,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Total APIs"
-          data={dashboardData?.stats?.totalApis}
+          data={dashboardData?.stats?.totalApis ?? 0}
           icon={<Globe />}
           accentClass="bg-emerald-400/10 text-emerald-400"
           description="Endpoints being watched"
@@ -195,7 +207,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Avg Response Time"
-          data={dashboardData?.stats?.avgResponseTime}
+          data={dashboardData?.stats?.avgResponseTime ?? 0}
           suffix="ms"
           icon={<Activity />}
           accentClass="bg-amber-400/10 text-amber-400"
@@ -204,7 +216,7 @@ export default function DashboardPage() {
 
         <DashboardCard
           title="Active Alerts"
-          data={dashboardData?.stats?.activeAlerts}
+          data={dashboardData?.stats?.activeAlerts ?? 0}
           icon={<BarChart3 />}
           accentClass="bg-rose-400/10 text-rose-400"
           description="Require attention"
@@ -356,7 +368,7 @@ export default function DashboardPage() {
               <div className="flex-1">
                 <p className="text-sm font-medium">Recently register API: {recentActivities?.latestApi.url}</p>
                 <p className="text-sm font-medium">method: {recentActivities?.latestApi?.method}</p>
-                <p className="text-xs text-muted-foreground">registered: {formatLastCheckedAt(recentActivities?.latestApi?.createdAt)}</p>
+                <p className="text-xs text-muted-foreground">registered: {recentActivities?.latestApi?.createdAt ? formatLastCheckedAt(recentActivities.latestApi.createdAt) : '—'}</p>
               </div>
             </div>
 
@@ -366,7 +378,7 @@ export default function DashboardPage() {
               <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">Recently created project: {recentActivities?.latestProject?.name}</p>
-                <p className="text-xs text-muted-foreground">created: {formatLastCheckedAt(recentActivities?.latestProject?.createdAt)}</p>
+                <p className="text-xs text-muted-foreground">created: {recentActivities?.latestProject?.createdAt ? formatLastCheckedAt(recentActivities.latestProject.createdAt) : '—'}</p>
               </div>
             </div>
 
