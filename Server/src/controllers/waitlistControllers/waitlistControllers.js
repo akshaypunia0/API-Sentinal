@@ -27,7 +27,20 @@ const addToWaitlist = async (req, res, next) => {
     }
 }
 
+const waitlistHealthCheck = async (req, res, next) => {
+    try {
+        return res.status(200).json({
+            success: true,
+            message: "Healthcheck success"
+        })
+    } catch (error) {
+        console.log("Error while waitlistHealthCheck", error.message);
+        next(error)
+    }
+}
+
 
 export {
-    addToWaitlist
+    addToWaitlist,
+    waitlistHealthCheck
 }

@@ -16,7 +16,7 @@ const app = express()
 app.use(cookieParser())
 
 app.use(cors({
-    origin: [process.env.CLIENT_URL, process.env.PRODUCTION_CLIENT_URL],
+    origin: process.env.CLIENT_URL,
     credentials: true
 }))
 
