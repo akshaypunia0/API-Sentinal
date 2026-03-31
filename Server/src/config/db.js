@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import { PrismaClient } from '../../src/generated/prisma/client.ts'
+import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 console.log("DB string in db.js: ", process.env.DATABASE_URL);
