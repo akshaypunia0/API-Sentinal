@@ -9,7 +9,7 @@ const addToWaitlist = async(email) => {
     })
 
     if(existing) {
-        throw new AppError("Already applied for Early Access", 404); 
+        throw new AppError("Already applied for Early Access", 409); 
     }
 
 

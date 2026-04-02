@@ -5,6 +5,7 @@ import app from "./src/app.js"
 import { connectDB } from "./src/config/db.js"
 import monitoringServices from "./src/services/monitoringServices/monitoringServices.js"
 import cron from "node-cron"
+import { cleanupLogs } from "./src/cron/cleanupLogs.js"
 
 const PORT = process.env.PORT || 4001
 
@@ -76,6 +77,9 @@ const checkApisByInterval = async (intervalMinutes) => {
         throw error;
     }
 };
+
+// old data cleanup
+cleanupLogs()
 
 // Start the scheduler
 startMonitoringScheduler()
