@@ -314,7 +314,11 @@ const page = () => {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="pt-0 pb-6">
-                                <Button size="lg" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                                <Button
+                                    size="lg"
+                                    onClick={() => {
+                                        setApiModelOpen(true)
+                                    }} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
                                     <Plus className="w-5 h-5 mr-2" />
                                     Add Your First API
                                 </Button>
@@ -327,22 +331,29 @@ const page = () => {
 
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="p-0 bg-transparent border-none">
-                    <DialogTitle>
-                        This is testing
-                    </DialogTitle>
-
-                    <DialogHeader className="hidden">
-                        {/* optional */}
-                    </DialogHeader>
-
-                    <ProjectForm
-                        initialData={selectedProject}
-                        onSubmit={handleSubmitProject}
-                        setOpen={setOpen}
-
-                    />
-
+                <DialogContent
+                    className="fixed! inset-0! top-0! left-0! translate-x-0! translate-y-0! max-w-none! w-auto! rounded-none! bg-black/60 backdrop-blur-sm border-none shadow-none ring-0 flex items-center justify-center overflow-y-auto p-6 sm:p-10"
+                    showCloseButton={false}
+                >
+                    <DialogTitle className="hidden" />
+                    <DialogHeader className="hidden" />
+                    <div className="w-full max-w-[520px] relative">
+                        {/* Custom close button */}
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-[#1c1c1c] border border-[#333] flex items-center justify-center text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-colors shadow-lg"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                        </button>
+                        <ProjectForm
+                            initialData={selectedProject}
+                            onSubmit={handleSubmitProject}
+                            setOpen={setOpen}
+                        />
+                    </div>
                 </DialogContent>
             </Dialog>
 

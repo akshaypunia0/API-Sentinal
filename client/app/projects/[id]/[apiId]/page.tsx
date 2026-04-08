@@ -38,6 +38,8 @@ import {
   Settings
 } from 'lucide-react'
 import { apimanagementApiCalls } from '@/lib/apiCalls/apiManagementCalls'
+import { DialogContent, Dialog, DialogTitle, DialogHeader } from '@/components/ui/dialog'
+import ApiRegistrationForm from '@/components/forms/ApiForm'
 
 const page = () => {
   const { id, apiId } = useParams()
@@ -76,6 +78,7 @@ const page = () => {
   // Mock data - replace with your API calls
   const [apiData, setApiData] = useState<apiData | null>(null)
   const [recentLogs, setRecentLogs] = useState<recentLogs[]>([])
+  const [apiModelOpen, setApiModelOpen] = useState(false)
 
   useEffect(() => {
     // Fetch API data here
@@ -150,8 +153,21 @@ const page = () => {
     setRecentLogs(response.logs)
   }
 
-  console.log("apiData", apiData)
-  console.log("recentLogs", recentLogs)
+  // console.log("apiData", apiData)
+  // console.log("recentLogs", recentLogs)
+
+  const handleApiSubmit = async (data: object) => {
+    try {
+
+      console.log("Update API data: ", data);
+
+      const response = await apimanagementApiCalls.updateApi(id, apiId, data)
+      setApiData(response.apiData)
+      setApiModelOpen(false)
+    } catch (error) {
+      console.error("Error updating API:", error)
+    }
+  }
 
 
 
@@ -160,7 +176,7 @@ const page = () => {
   if (!apiData) {
     return (
       <div className="max-w-7xl mx-auto p-6 space-y-8 min-h-screen animate-pulse">
-  
+
         {/* Breadcrumb */}
         <div className="flex items-center gap-2">
           <div className="h-4 w-20 bg-muted rounded"></div>
@@ -169,67 +185,67 @@ const page = () => {
           <div className="h-4 w-4 bg-muted rounded"></div>
           <div className="h-4 w-32 bg-muted rounded"></div>
         </div>
-  
-  
+
+
         {/* Header */}
         <div className="flex justify-between items-start">
-  
+
           <div className="space-y-3">
             <div className="h-6 w-24 bg-muted rounded"></div>
             <div className="h-8 w-80 bg-muted rounded"></div>
             <div className="h-4 w-96 bg-muted rounded"></div>
           </div>
-  
+
           <div className="flex gap-2">
             <div className="h-9 w-20 bg-muted rounded"></div>
             <div className="h-9 w-20 bg-muted rounded"></div>
           </div>
-  
+
         </div>
-  
-  
+
+
         {/* Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-  
+
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
               className="h-24 rounded-lg bg-muted"
             />
           ))}
-  
+
         </div>
-  
-  
+
+
         {/* Main Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  
+
           {/* Configuration */}
           <div className="lg:col-span-2 rounded-lg bg-muted h-64"></div>
-  
+
           {/* Quick actions */}
           <div className="rounded-lg bg-muted h-64"></div>
-  
+
         </div>
-  
-  
+
+
         {/* Logs Table */}
         <div className="rounded-lg border p-6 space-y-4">
-  
+
           <div className="flex gap-4">
             <div className="h-8 w-24 bg-muted rounded"></div>
             <div className="h-8 w-24 bg-muted rounded"></div>
           </div>
-  
+
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
               className="h-10 bg-muted rounded"
             />
           ))}
-  
+
         </div>
-  
+
       </div>
     )
   }
@@ -281,9 +297,16 @@ const page = () => {
 
 
         <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setApiModelOpen(true)
+            }}
+          >
+
             <Edit3 className="w-4 h-4 mr-2" />
-            Edit Project
+            Update API
           </Button>
 
           {/* <Button variant="destructive" size="sm">
@@ -535,6 +558,36 @@ const page = () => {
         </Tabs>
 
       </Card>
+
+
+      <Dialog open={apiModelOpen} onOpenChange={setApiModelOpen}>
+        <DialogContent
+          className="fixed! inset-0! top-0! left-0! translate-x-0! translate-y-0! max-w-none! w-auto! rounded-none! bg-black/60 backdrop-blur-sm border-none shadow-none ring-0 flex items-center justify-center overflow-y-auto p-6 sm:p-10"
+          showCloseButton={false}
+        >
+          <DialogTitle className="hidden" />
+          <DialogHeader className="hidden" />
+          <div className="w-full max-w-[750px] relative">
+            {/* Custom close button */}
+            <button
+              type="button"
+              onClick={() => setApiModelOpen(false)}
+              className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-[#1c1c1c] border border-[#333] flex items-center justify-center text-zinc-400 hover:text-white hover:bg-[#2a2a2a] transition-colors shadow-lg"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
+            <ApiRegistrationForm
+              projectId={id as string}
+              apiId={apiId as string}
+              initialData={apiData as object}
+              onSubmit={handleApiSubmit}
+              setOpen={setApiModelOpen}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   )

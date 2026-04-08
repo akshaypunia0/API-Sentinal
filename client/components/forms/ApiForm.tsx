@@ -37,7 +37,8 @@ type ApiFormData = {
 
 type ApiFormProps = {
   initialData?: Partial<ApiFormData> | null
-  projectId: string
+  projectId: string,
+  apiId?: string,
   onSubmit: (data: ApiFormData) => Promise<void> | void
   setOpen: (open: boolean) => void
 }
@@ -312,6 +313,7 @@ const AuthFields = ({
 const ApiRegistrationForm: React.FC<ApiFormProps> = ({
   initialData,
   projectId,
+  apiId,
   onSubmit,
   setOpen,
 }) => {
