@@ -20,6 +20,8 @@ import LoadigPage from '@/components/other/Loadig'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import ProjectForm from '@/components/forms/ProjectForm'
 import ApiRegistrationForm from '@/components/forms/ApiForm'
+import { Trash2Icon } from "lucide-react"
+import AlertDialogDestructive from '@/components/other/AlertDialog'
 
 const page = () => {
 
@@ -55,6 +57,8 @@ const page = () => {
     const [open, setOpen] = useState(false)
     const [apiModelOpen, setApiModelOpen] = useState(false)
     const [selectedProject, setSelectedProject] = useState<any>(null)
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+    const [apiIdToDelete, setApiIdToDelete] = useState<string | null>(null)
 
 
 
@@ -146,6 +150,13 @@ const page = () => {
     const handleApiSubmit = async (data: object) => {
         await apimanagementApiCalls.registerApi(id, data)
         getAllApis()
+    }
+
+    const handleDeleteApi = async () => {
+        if (apiIdToDelete) {
+            await apimanagementApiCalls.deleteApi(id, apiIdToDelete)
+            getAllApis()
+        }
     }
 
 
@@ -285,6 +296,10 @@ const page = () => {
                                                                 variant="ghost"
                                                                 size="sm"
                                                                 className="h-8 w-8 p-0 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive"
+                                                                onClick={() => {
+                                                                    setOpenDeleteDialog(true);
+                                                                    setApiIdToDelete(api.id);
+                                                                }}
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </Button>
@@ -384,6 +399,16 @@ const page = () => {
                     </div>
                 </DialogContent>
             </Dialog>
+
+
+            <AlertDialogDestructive
+                icon={<Trash2Icon />}
+                title="Delete API"
+                description="Are you sure you want to delete this API?"
+                onSubmit={handleDeleteApi}
+                onOpenChange={setOpenDeleteDialog}
+                open={openDeleteDialog}
+            />
 
         </div>
     )

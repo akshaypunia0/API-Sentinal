@@ -10,7 +10,7 @@ const getAllApis = async () => {
 }
 
 
-const registerApi = async (projectId: string, apiData: object) => {
+const registerApi = async (projectId, apiData) => {
     try {
         const response = await apiAuth.post(`/user/apis/${projectId}/apis`, apiData);
         return response.data;
@@ -20,7 +20,7 @@ const registerApi = async (projectId: string, apiData: object) => {
 }
 
 
-const getAllApisByProjectId = async (projectId: string) => {
+const getAllApisByProjectId = async (projectId) => {
     try {
         const response = await apiAuth.get(`/user/apis/${projectId}/apis`);
         return response.data;
@@ -29,7 +29,7 @@ const getAllApisByProjectId = async (projectId: string) => {
     }
 }
 
-const getApiById = async (projectId: string, apiId: string) => {
+const getApiById = async (projectId, apiId) => {
     try {
         const response = await apiAuth.get(`/user/apis/${projectId}/api/${apiId}`);
         return response.data;
@@ -38,7 +38,7 @@ const getApiById = async (projectId: string, apiId: string) => {
     }
 }
 
-const updateApi = async (projectId: string, apiId: string, apiData: object) => {
+const updateApi = async (projectId, apiId, apiData) => {
     try {
         const response = await apiAuth.patch(`/user/apis/${projectId}/api/${apiId}`, apiData);
         return response.data;
@@ -47,7 +47,7 @@ const updateApi = async (projectId: string, apiId: string, apiData: object) => {
     }
 }
 
-const deleteApi = async (projectId: string, apiId: string) => {
+const deleteApi = async (projectId, apiId) => {
     try {
         const response = await apiAuth.delete(`/user/apis/${projectId}/api/${apiId}`);
         return response.data;
@@ -57,7 +57,7 @@ const deleteApi = async (projectId: string, apiId: string) => {
 }
 
 
-const getApiLogs = async (projectId: string, apiId: string) => {
+const getApiLogs = async (projectId, apiId) => {
     try {
         const response = await apiAuth.get(`/user/apis/${projectId}/api/${apiId}/logs`);
         return response.data;
@@ -66,7 +66,7 @@ const getApiLogs = async (projectId: string, apiId: string) => {
     }
 }
 
-const getApiStats = async (projectId: string, apiId: string) => {
+const getApiStats = async (projectId, apiId) => {
     try {
         const response = await apiAuth.get(`/user/apis/triggerApi`);
         return response.data;

@@ -8,10 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import AlertDialogDestructive from "../other/AlertDialog";
+import { Trash2Icon } from "lucide-react";
+import { useState } from "react";
 
 
 
-function ProjectTable({ allProjects, deleteProject, view }: any) {
+function ProjectTable({ allProjects, deleteProject, view, onDelete }: any) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
 
   console.log("All projects inside table: ", allProjects);
 
@@ -45,11 +49,22 @@ function ProjectTable({ allProjects, deleteProject, view }: any) {
 
                 {/* DELETE */}
                 <Button
-                  onClick={() => deleteProject(project.id)}
+                  onClick={() => setDeleteDialogOpen(project.id)}
                   className="bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 px-3 py-1.5 text-sm rounded-md"
                 >
                   Delete
                 </Button>
+                <AlertDialogDestructive
+                  icon={<Trash2Icon />}
+                  title="Delete Project"
+                  description="Are you sure you want to delete this project?"
+                  id={project.id}
+                  open={deleteDialogOpen === project.id}
+                  onOpenChange={(isOpen: boolean) => {
+                    if (!isOpen) setDeleteDialogOpen(null);
+                  }}
+                  onSubmit={() => onDelete(project.id)}
+                />
               </TableCell>
             </TableRow>
           ))}

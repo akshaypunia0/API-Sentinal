@@ -10,13 +10,13 @@ const apiAuth = axios.create({
 // Simple auth utility - handles both API calls and basic logic
 export const authUtils = {
   // Login user
-  async login(credentials: { email: string; password: string }) {
+  async login(credentials) {
     try {
       const response = await apiAuth.post('/auth/login', credentials)
       console.log("Login response: ", response);
       localStorage.setItem('token', response.data.token)
       return { success: true, data: response.data }
-    } catch (error: any) {
+    } catch (error) {
       return {
         success: false,
         error: error.response?.data?.error || 'Login failed'
@@ -40,7 +40,7 @@ export const authUtils = {
 
   // Check if user is authenticated
   async checkAuth() {
-    
+
     try {
       const token = localStorage.getItem('token')
       if (!token) return { success: false, user: null }
@@ -49,7 +49,7 @@ export const authUtils = {
       })
 
       console.log("Inside checkauth: ", response.data);
-      
+
       return { success: true, user: response.data.data }
     } catch (error) {
       return { success: false, user: null }
@@ -57,11 +57,11 @@ export const authUtils = {
   },
 
   // Register user
-  async register(userData: object) {
+  async register(userData) {
     try {
       const response = await apiAuth.post('/auth/register', userData)
       return { success: true, data: response.data }
-    } catch (error: any) {
+    } catch (error) {
       return {
         success: false,
         error: error.response?.data?.error || 'Registration failed'

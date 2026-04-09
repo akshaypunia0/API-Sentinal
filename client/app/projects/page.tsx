@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FolderOpen, Plus } from 'lucide-react'
+import { FolderOpen, Plus, Trash2Icon } from 'lucide-react'
 import { authUtils } from '@/lib/apiCalls/authApi'
 import ProjectTable from '@/components/projects/Table'
 import { projectApiCalls } from '@/lib/apiCalls/projectApis'
@@ -69,6 +69,11 @@ export default function ProjectsPage() {
     fetchAllProjects()
   }
 
+  const handleDeleteProject = async (id: string) => {
+    await projectApiCalls.deleteProject(id)
+    fetchAllProjects()
+  }
+
 
 
 
@@ -110,7 +115,7 @@ export default function ProjectsPage() {
       </div>
 
       {allProjects.length > 0 ? <div className="bg-card p-3 rounded-2xl border border-border">
-        <ProjectTable allProjects={allProjects} deleteProject={deleteProject} view={View} />
+        <ProjectTable allProjects={allProjects} deleteProject={deleteProject} view={View} onDelete={handleDeleteProject} />
       </div>
         :
         <Card>
@@ -132,7 +137,7 @@ export default function ProjectsPage() {
           </CardContent>
         </Card>}
 
-        <PaginationComponent />
+      <PaginationComponent />
 
 
       <Dialog open={open} onOpenChange={setOpen}>

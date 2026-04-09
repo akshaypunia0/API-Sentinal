@@ -1,6 +1,6 @@
 import apiAuth, { authUtils } from './authApi';
 
-const getAllProjects = async (page: number, limit: number) => {
+const getAllProjects = async (page, limit) => {
     try {
         const response = await apiAuth.get(`/user/projects/getAllProjects?page=${page}&limit=${limit}`)
 
@@ -11,7 +11,7 @@ const getAllProjects = async (page: number, limit: number) => {
 }
 
 
-const createProject = async (projectData: object) => {
+const createProject = async (projectData) => {
     try {
         const response = await apiAuth.post('/user/projects/createProject', projectData)
         return response.data
@@ -21,7 +21,7 @@ const createProject = async (projectData: object) => {
 }
 
 
-const getProjectById = async (id: string) => {
+const getProjectById = async (id) => {
     try {
         const response = await apiAuth.get(`/user/projects/getProjectById/${id}`)
         return response.data
@@ -31,7 +31,7 @@ const getProjectById = async (id: string) => {
 }
 
 
-const updateProject = async (id: string, projectData: object) => {
+const updateProject = async (id, projectData) => {
     try {
         const response = await apiAuth.patch(`/user/projects/updateProject/${id}`, projectData)
         return response.data
@@ -41,9 +41,11 @@ const updateProject = async (id: string, projectData: object) => {
 }
 
 
-const deleteProject = async (id: string) => {
+const deleteProject = async (id) => {
     try {
         const response = await apiAuth.delete(`/user/projects/deleteProject/${id}`)
+        console.log("Delete response: ", response);
+
         return response.data
     } catch (error) {
         throw new Error('Failed to delete project')
@@ -56,7 +58,7 @@ const getDashboardData = async () => {
         const response = await apiAuth.get("/user/dashboard")
 
         return response.data
-        
+
     } catch (error) {
         throw new Error("Failed to get Dashboard data")
     }
