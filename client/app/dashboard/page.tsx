@@ -8,6 +8,7 @@ import { authUtils } from '@/lib/apiCalls/authApi'
 import { projectApiCalls } from '@/lib/apiCalls/projectApis'
 import { apimanagementApiCalls } from '@/lib/apiCalls/apiManagementCalls'
 import DashboardCard from '@/components/dashboard/Card'
+import EmptyDashboard from '@/components/dashboard/EmptyDashboard'
 import LoadigPage from '@/components/other/Loadig'
 
 import {
@@ -152,6 +153,10 @@ export default function DashboardPage() {
     Down: "#ef4444"     // red
   }
 
+  const hasNoProjects = (dashboardData?.stats?.totalProjects ?? 0) === 0
+  const hasNoApis = (dashboardData?.stats?.totalApis ?? 0) === 0
+  const showEmptyState = hasNoProjects || hasNoApis
+
 
 
   const formatLastCheckedAt = (dateString: string) => {
@@ -224,6 +229,10 @@ export default function DashboardPage() {
 
       </div>
 
+      {showEmptyState ? (
+        <EmptyDashboard hasNoProjects={hasNoProjects} hasNoApis={hasNoApis} />
+      ) : (
+      <>
       {/* Charts Section */}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -387,6 +396,8 @@ export default function DashboardPage() {
         </CardContent>
 
       </Card>
+      </>
+      )}
 
     </div>
   )
