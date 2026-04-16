@@ -329,7 +329,7 @@ const getApiStats = async (req, res, next) => {
 
 // const triggerApiCheck = async (req, res, next) => {
 //     try {
-        
+
 //         const {api} = req.body
 
 //         // Perform immediate check
@@ -346,6 +346,79 @@ const getApiStats = async (req, res, next) => {
 //     }
 // }
 
+const checkInstantApi = async (req, res, next) => {
+    try {
+        const { url, method, authType, authToken, authHeaderName, authHeaderValue, username, password, body } = req.body
+
+        if (!url || !method) {
+            return res.status(400).json({
+                message: "URL and method are required"
+            })
+        }
+
+        switch (authType) {
+            case "NONE":
+                break
+            case "BEARER_TOKEN":
+                if (!authToken) {
+                    return res.status(400).json({
+                        message: "Bearer token is required"
+                    })
+                }
+                break
+            case "API_KEY":
+                if (!authHeaderName || !authToken) {
+                    return res.status(400).json({
+                        message: "API key header name and token are required"
+                    })
+                }
+                break
+            case "BASIC_AUTH":
+                if (!username || !password) {
+                    return res.status(400).json({
+                        message: "Username and password are required for Basic Auth"
+                    })
+                }
+                break
+            case "CUSTOM_HEADER":
+                if (!authHeaderName || !authHeaderValue) {
+                    return res.status(400).json({
+                        message: "Custom header name and value are required"
+                    })
+                }
+                break
+            default:
+                return res.status(400).json({
+                    message: "Invalid auth type"
+                })
+        }
+
+        // Perform immediate check
+        const logEntry = await monitoringServices.instantApiCheck({
+            url,
+            method,
+            authType,
+            authToken,
+            authHeaderName,
+            authHeaderValue,
+            username,
+            password,
+            body
+        })
+
+        return res.status(200).json({
+            status: true,
+            message: "API check completed",
+            result: logEntry
+        })
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
 
 
 export {
@@ -356,5 +429,6 @@ export {
     deleteApi,
     getApiLogs,
     getApiStats,
-    totalApisOfUser
+    totalApisOfUser,
+    checkInstantApi
 }

@@ -20,7 +20,7 @@ app.use(cors({
     credentials: true
 }))
 
-app.use(express.json()) 
+app.use(express.json())
 
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/user", dasboardRoutes)
@@ -30,7 +30,6 @@ app.use("/api/v1/waitlist", waitlistRoute)
 
 
 import globalErrorHandler from "./middlewares/errorMiddleware.js"
-import { dashboardData } from "./controllers/dashboardControllers/dashboardControllers.js"
 app.use(globalErrorHandler)
 
 

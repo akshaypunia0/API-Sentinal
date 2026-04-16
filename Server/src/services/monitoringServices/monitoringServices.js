@@ -7,7 +7,7 @@ console.log("env variables inside monitoringServices.js: ", process.env.SMTP_SER
 
 // Email configuration
 const emailTransporter = nodemailer.createTransport({
-    
+
     service: process.env.SMTP_SERVICE || "gmail",
     auth: {
         user: process.env.SMTP_USER,
@@ -94,7 +94,7 @@ const checkNonGetApi = async (api, headers) => {
     console.log(`🔍 Checking ${api.method} API: ${api.url} (dry-run mode)`);
 
     // Strategy 1: Use custom health check URL if provided
-    if (api.healthCheckUrl) { 
+    if (api.healthCheckUrl) {
         try {
             console.log(`   Using custom health URL: ${api.healthCheckUrl}`);
             const response = await performRequest("GET", api.healthCheckUrl, headers);
@@ -176,7 +176,7 @@ const createLog = async (apiId, statusCode, status, responseTime) => {
 const sendDownAlert = async (api, user) => {
 
     console.log("Inside sendDownAlert: ", api, user);
-    
+
     try {
         const mailOptions = {
             from: process.env.SMTP_USER,
@@ -478,11 +478,63 @@ const triggerApiCheck = async (apiId, projectId, userId) => {
     return { message: "API check completed" };
 };
 
+
+const instantApiCheck = async (apiData) => {
+    const { url, method, body } = apiData;
+    const headers = {
+        ...buildAuthHeaders(apiData),
+        "Content-Type": "application/json"
+    };
+
+    const startTime = Date.now();
+
+    try {
+        const response = await axios({
+            method,
+            url,
+            timeout: 15000,
+            headers,
+            data: method !== "GET" ? body : undefined,
+            validateStatus: () => true
+        });
+
+        const endTime = Date.now();
+
+        return {
+            success: response.status < 400,
+            status: response.status,
+            statusText: response.statusText,
+            responseTime: `${endTime - startTime}ms`,
+            data: response.data,
+            headers: response.headers,
+            size: JSON.stringify(response.data || "").length, // approx size
+            timestamp: new Date().toISOString(),
+            error: response.status >= 400 ? response.data : null
+        };
+
+    } catch (error) {
+        const endTime = Date.now();
+
+        return {
+            success: false,
+            status: error.response?.status || 0,
+            statusText: "FAILED",
+            responseTime: endTime - startTime,
+            data: null,
+            headers: null,
+            size: 0,
+            timestamp: new Date().toISOString(),
+            error: error.message
+        };
+    }
+};
+
 export default {
     checkAllActiveApis,
     checkApi,
     getApiLogs,
     getApiStats,
     triggerApiCheck,
-    buildAuthHeaders
+    buildAuthHeaders,
+    instantApiCheck
 };
