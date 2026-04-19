@@ -7,13 +7,17 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // Public auth routes that don't require login
+  const publicAuthRoutes = ['/login', '/register', '/forgot-password', '/reset-password']
+  const isPublicAuthRoute = publicAuthRoutes.some(route => pathname.startsWith(route))
+
   // If not logged in and trying to access protected routes
-  if (!isLoggedIn && !pathname.startsWith('/login') && !pathname.startsWith('/register')) {
+  if (!isLoggedIn && !isPublicAuthRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // If logged in and trying to access auth pages, redirect to dashboard
-  if (isLoggedIn && (pathname === '/login' || pathname === '/register')) {
+  if (isLoggedIn && isPublicAuthRoute) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

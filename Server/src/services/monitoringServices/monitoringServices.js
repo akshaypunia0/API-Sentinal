@@ -1,19 +1,8 @@
 import { prisma } from "../../config/db.js";
 import axios from "axios";
-import nodemailer from "nodemailer";
+import emailTransporter from "../../utills/emailService.js";
 
 console.log("env variables inside monitoringServices.js: ", process.env.SMTP_SERVICE, process.env.SMTP_HOST);
-
-
-// Email configuration
-const emailTransporter = nodemailer.createTransport({
-
-    service: process.env.SMTP_SERVICE || "gmail",
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    }
-});
 
 // Rate limiting helper to prevent overwhelming APIs
 const limit = (fn, concurrency = 5) => {

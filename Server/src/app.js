@@ -10,6 +10,7 @@ import projectRoutes from "./routes/projectRoutes/projectRoutes.js"
 import apiRoutes from "./routes/apiRoutes/apiRoutes.js"
 import dasboardRoutes from "./routes/deshboardRoutes/dashboardRoutes.js"
 import waitlistRoute from "./routes/waitlistRoutes/waitlistRoutes.js"
+import resetPasswordRoute from "./routes/resetPasswordRoutes/resetPasswordRoutes.js"
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use("/api/v1/user", dasboardRoutes)
 app.use("/api/v1/user/projects", projectRoutes)
 app.use("/api/v1/user/apis", apiRoutes)
 app.use("/api/v1/waitlist", waitlistRoute)
+app.use("/api/v1/password", resetPasswordRoute)
 
 
 import globalErrorHandler from "./middlewares/errorMiddleware.js"
