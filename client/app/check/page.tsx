@@ -185,23 +185,22 @@ const statusColor = (code: number) => {
    MAIN PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════════════ */
 
-interface result {
-  status: string | boolean;
-  message: string;
-  result: CheckApiResponse;
-
-}
-
 interface CheckApiResponse {
-  success: string | boolean;
-  responseTime: number;
+  success: boolean;
+  responseTime: string | number;
   status: number;
   statusText?: string;
   size: number;
   timestamp: string;
   data: any;
-  error?: string;
-  headers?: Record<string, string>;
+  error?: string | null;
+  headers?: Record<string, string> | null;
+}
+
+interface resultData {
+  status: boolean;
+  message: string;
+  result: CheckApiResponse;
 }
 
 export default function CheckApiPage() {
@@ -239,7 +238,7 @@ export default function CheckApiPage() {
 
   /* ── response state ────────────────────────────────────────── */
   const [isChecking, setIsChecking] = useState(false)
-  const [result, setResult] = useState<result | null>(null)
+  const [result, setResult] = useState<resultData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [copiedField, setCopiedField] = useState<string | null>(null)
 
@@ -281,10 +280,15 @@ export default function CheckApiPage() {
 
       const res = await apiCheckerCalls.checkInstantApi(payload)
 
-      if (res.success === false && res.error) {
-        setError(res.error)
+      // Type-safe response handling
+      const typedRes = res as any
+      
+      // Check if the API response indicates an error
+      if (!typedRes.status || !typedRes.result?.success) {
+        const errorMessage = typedRes.result?.error || typedRes.message || 'API check failed'
+        setError(String(errorMessage))
       } else {
-        setResult(res)
+        setResult(typedRes as resultData)
       }
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred')

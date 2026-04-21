@@ -14,11 +14,8 @@ import apiAuth from './authApi';
  * @param {string} [payload.password]
  * @param {string} [payload.body]     - JSON string for request body (POST/PUT/PATCH)
  *
- * @returns {{ status, responseTime, headers, body, success, error? }}
+ * @returns {{ status: boolean, message: string, result: {success, status, responseTime, ...} }}
  */
-
-
-//  * @returns {{ status, responseTime, headers, body, success, error? }}
 const checkInstantApi = async (payload) => {
     try {
         console.log("Payload for instant check API: ", payload);
@@ -26,17 +23,43 @@ const checkInstantApi = async (payload) => {
         const response = await apiAuth.post('/user/apis/check-instant', payload);
         console.log("Response for instant check API: ", response.data);
 
+        // Response structure from server: { status: true, message: "...", result: {...} }
         return response.data;
     } catch (error) {
-        // If the backend returns a structured error, surface it
+        // If the backend returns a structured error, surface it with consistent structure
         if (error.response?.data) {
             return {
-                success: false,
-                error: error.response.data.message || error.response.data.error || 'Request failed',
-                status: error.response.status,
+                status: false,
+                message: error.response.data.message || error.response.data.error || 'Request failed',
+                result: {
+                    success: false,
+                    status: error.response.status,
+                    statusText: 'ERROR',
+                    responseTime: 0,
+                    data: null,
+                    headers: {},
+                    size: 0,
+                    timestamp: new Date().toISOString(),
+                    error: error.response.data.message || error.response.data.error || 'Request failed'
+                }
             };
         }
-        throw new Error('Failed to check API');
+        // Network error or other issues
+        return {
+            status: false,
+            message: 'Failed to check API',
+            result: {
+                success: false,
+                status: 0,
+                statusText: 'NETWORK_ERROR',
+                responseTime: 0,
+                data: null,
+                headers: {},
+                size: 0,
+                timestamp: new Date().toISOString(),
+                error: error.message || 'Network error'
+            }
+        };
     }
 };
 
