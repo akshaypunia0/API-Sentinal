@@ -407,8 +407,8 @@ const page = () => {
                 description="Are you sure you want to delete this API?"
                 onSubmit={handleDeleteApi}
                 onOpenChange={setOpenDeleteDialog}
-                open={openDeleteDialog}
-            />
+                open={openDeleteDialog} 
+                id={undefined}         />
 
         </div>
     )

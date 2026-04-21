@@ -30,7 +30,7 @@ const perks = [
 function RegisterForm() {
   const [fullName, setFullName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
-  const [phone, setPhone] = useState<number | null>(null)
+  const [phone, setPhone] = useState<number>()
   const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -214,7 +214,7 @@ function RegisterForm() {
                   type="tel"
                   placeholder="+1 234 567 8900"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(Number(e.target.value))}
                   disabled={isLoading}
                   className="pl-9 h-11 bg-card border-border focus:border-white/30 transition-colors"
                 />
