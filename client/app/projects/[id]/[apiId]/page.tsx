@@ -88,7 +88,7 @@ const page = () => {
     const interval = setInterval(() => {
       getApiData()
       getRecentLogs()
-    }, 21000)
+    }, 57000)
 
     return () => clearInterval(interval)
 

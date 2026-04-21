@@ -94,7 +94,7 @@ export default function DashboardPage() {
 
     const interval = setInterval(() => {
       getDashboardData()
-    }, 21000)
+    }, 57000)
 
     return () => clearInterval(interval)
 
